@@ -1,8 +1,41 @@
 import java.util.*
+import kotlin.system.exitProcess
+
 
 class Navigation() {
+    fun <T: Menu> show(source: T) {
 
-    fun checkInput(): Int {
+        while (true) {
+
+            if (source is StartMenu) {
+                source.menu["Создать архив"] = { source.makeArchive() }
+                source.menu["Выйти"] = { exitProcess(1) }
+            } else if (source is Archive) {
+                source.menu["Создать заметку"] = { source.newNote() }
+                source.menu["Вернуться к выбору архива"] = {Navigation().show(source.source)}
+            } else if (source is Note) {
+                source.menu["Изменить текст заметки"] = { source.changeNote() }
+                source.menu["Вернуться к выбору заметки"] = { Navigation().show(source.source) }
+                source.menu["Показать заметку"] = { source.showNote() }
+            }
+            makeMenu(source)
+            }
+
+        }
+
+        fun <T: Menu> makeMenu(source: T){
+            for (i in source.menu.keys.toList()) {
+                println("${source.menu.keys.toList().indexOf(i)}: $i")
+            }
+            val input = checkInput()
+            try {
+                source.menu.values.toList()[input].invoke()
+            } catch (e: java.lang.IndexOutOfBoundsException) {
+                println("Вы ввели слишком большое число. Введите число, соответствующее выбранному пункту меню")
+            }
+        }
+
+        fun checkInput(): Int {
         var output: Int? = null
         while (output == null) {
             println("Введите число, соответствующее выбранному пункту меню")
@@ -15,24 +48,4 @@ class Navigation() {
         }
         return output
     }
-
-    fun showMenu(menu: MutableList<String>) {
-        println("Выберите пункт меню:")
-        for (i in menu) {
-            println("${menu.indexOf(i)}: $i")
-        }
-    }
-
-   /* fun makeChoice(, input: Int) {
-        when(input) {
-            0 -> makeArchive()
-            1 -> return
-            in 2..menu.size - 1 -> {
-                contain.elementAt(input - 2).showMenu()
-            }
-            else -> {
-                println("Введите число, соответствующее пункту меню")
-            }
-        }
-    }*/
 }

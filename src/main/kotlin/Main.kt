@@ -1,8 +1,7 @@
-import java.util.Scanner
 fun main() {
 
-    val archiveMenu = ArchiveMenu()
-    archiveMenu.showArchiveMenu()
+    val startMenu = StartMenu()
+    Navigation().show(startMenu)
 
 }
 
